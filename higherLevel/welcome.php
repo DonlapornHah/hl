@@ -14,7 +14,7 @@ $data = mysqli_fetch_assoc($result);
 
 $isPass = ($data['result_status'] === "ผ่าน");
 $result_text = $isPass ? "ผ่าน" : "ไม่ผ่าน";
-$encourage = $isPass ? "ยินดีด้วยนะ ! 🎉🎉 <br>( อย่าลืมกดปุ่มข้างล่างเพื่อยืนยันการเป็นสมาชิกด้วยน้า )" : "ไม่เป็นไรนะ ! เก่งมากแล้ว ไว้เจอกันใหม่ปีหน้า 💪";
+$encourage = $isPass ? "ยินดีด้วย! 🎉" : "ไม่เป็นไรนะ! พยายามใหม่ครั้งหน้า 💪";
 
 $already_member = false;
 $showModal = false;
@@ -31,13 +31,11 @@ if(isset($_POST['join_club']) && $isPass && !$already_member){
     $year_level = (int)$data['year_level'];
     $faculty = mysqli_real_escape_string($conn, $data['faculty']);
     $activity_date = mysqli_real_escape_string($conn, $data['activity_date']);
-    $score = (int)$data['score'];
     $result_status = mysqli_real_escape_string($conn, $data['result_status']);
-    $comment = mysqli_real_escape_string($conn, $data['comment']);
 
     $insert_sql = "INSERT INTO member 
-    (student_id, fullname, nickname, year_level, faculty, activity_date, score, result_status, comment, joined_at)
-    VALUES ('$student_id','$fullname','$nickname','$year_level','$faculty','$activity_date','$score','$result_status','$comment', NOW())";
+    (student_id, fullname, nickname, year_level, faculty, activity_date, result_status, joined_at)
+    VALUES ('$student_id','$fullname','$nickname','$year_level','$faculty','$activity_date','$result_status', NOW())";
 
     mysqli_query($conn, $insert_sql);
     $already_member = true;
@@ -58,11 +56,10 @@ body {
     font-family: 'Kanit', sans-serif;
     margin:0; padding:0;
     min-height:100vh;
-    background: url('pic2.jpg') no-repeat center center fixed;
+    background: url('pic1.jpg') no-repeat center center fixed;
     background-size: cover;
     display:flex; justify-content:center; align-items:center;
 }
-
 .main-card {
     background: rgba(0,0,0,0.7);
     border-radius: 25px;
@@ -75,7 +72,6 @@ body {
     overflow:hidden;
     box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
-
 .result-banner {
     font-size:2rem;
     font-weight:700;
@@ -96,38 +92,29 @@ body {
 @keyframes bounceIn { 0% { transform: scale(0.5); opacity:0; } 60% { transform: scale(1.2); opacity:1; } 100% { transform: scale(1); } }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
 
-.info-group { text-align:left; margin:15px 0; padding:10px 15px; border-radius:12px; background: rgba(255,255,255,0.05);}
+.info-group { text-align:left; margin:15px 0; padding:10px 15px; border-radius:12px; background: rgba(255,255,255,0.05); display:flex; }
 .info-label { font-weight:600; color:#b0bec5; width:180px; display:inline-block; }
-.info-value { font-size:1.1rem; color:#eceff1; }
+.info-value { flex:1; font-size:1.1rem; color:#eceff1; word-break: break-word; }
 
 .encourage { font-size:1.5rem; font-weight:700; margin:25px 0; color:#ffd600; text-shadow: 1px 1px 5px #000; }
 
 button.btn-success {
-    border: none;
-    font-weight: 600;
-    font-size: 1.1rem;
-    padding: 12px 25px;
-    border-radius: 15px;
+    background: linear-gradient(90deg,#00c853,#b2ff59);
+    border:none;
+    font-weight:600;
+    font-size:1.1rem;
+    padding:12px 25px;
+    border-radius:15px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* เงาพื้นฐาน */
 }
-
-button.btn-success:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.5); /* เงาลึกขึ้น ดูเหมือนนูน */
-}
-
+button.btn-success:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
 
 canvas#confetti { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
 
 .modal-backdrop.show { opacity:0.8; background:#000; }
-.modal-content { background: rgba(30,30,30,0.95); color:#fff; border-radius:20px; text-align:center; padding:30px 20px; }
-
-.modal-content img.qr-code { display:block; margin:20px auto; width:90%; max-width:600px; height:auto; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.4); }
+.modal-content { background: rgba(30,30,30,0.9); color:#fff; border-radius:20px; text-align:center; padding:30px 20px; }
 
 .member-notice { font-size:1.3rem; font-weight:600; color:#00ffcc; margin:20px 0; text-shadow: 1px 1px 5px #000; }
-
-.qr-copy { margin-top:15px; }
 
 .welcome-text {
     font-family: 'Kanit', sans-serif;
@@ -148,7 +135,6 @@ canvas#confetti { position:absolute; top:0; left:0; width:100%; height:100%; poi
     .info-value { font-size:1rem; }
     .encourage { font-size:1.2rem; }
     .welcome-text { font-size:1.2rem; }
-    .modal-content img.qr-code { width:80%; }
 }
 </style>
 </head>
@@ -163,26 +149,32 @@ canvas#confetti { position:absolute; top:0; left:0; width:100%; height:100%; poi
     </div>
 
     <div class="encourage"><?php echo $encourage; ?></div>
+    
+    <div class="info-group"><span class="info-label">ชื่อ :</span> 
+    <span class="info-value"><?php echo htmlspecialchars($data['fullname']); ?></span></div>
 
-    <div class="info-group"><span class="info-label">ชื่อ:</span> <span class="info-value"><?php echo htmlspecialchars($data['fullname']); ?></span></div>
-    <div class="info-group"><span class="info-label">ชื่อเล่น:</span> <span class="info-value"><?php echo htmlspecialchars($data['nickname']); ?></span></div>
-    <div class="info-group"><span class="info-label">เลขนักศึกษา:</span> <span class="info-value"><?php echo htmlspecialchars($data['student_id']); ?></span></div>
-    <div class="info-group"><span class="info-label">ชั้นปี:</span> <span class="info-value"><?php echo $data['year_level']; ?></span></div>
-    <div class="info-group"><span class="info-label">คณะ:</span> <span class="info-value"><?php echo htmlspecialchars($data['faculty']); ?></span></div>
-    <div class="info-group"><span class="info-label">วันที่เข้าร่วมกิจกรรม:</span> <span class="info-value"><?php echo $data['activity_date']; ?></span></div>
-    <div class="info-group"><span class="info-label">คะแนน:</span> <span class="info-value"><?php echo $data['score']; ?></span></div>
-    <div class="info-group"><span class="info-label">ความคิดเห็น:</span> <span class="info-value"><?php echo nl2br(htmlspecialchars($data['comment'])); ?></span></div>
+    <div class="info-group"><span class="info-label">ชื่อเล่น :</span> 
+    <span class="info-value"><?php echo htmlspecialchars($data['nickname']); ?></span></div>
 
+    <div class="info-group"><span class="info-label">เลขนักศึกษา :</span> 
+    <span class="info-value"><?php echo htmlspecialchars($data['student_id']); ?></span></div>
+
+    <div class="info-group"><span class="info-label">รหัสวันออดิชั่น :</span> 
+    <span class="info-value"><?php echo str_pad($data['year_level'],3,'0',STR_PAD_LEFT); ?></span></div>
+
+    <div class="info-group"><span class="info-label">คณะ :</span> 
+    <span class="info-value"><?php echo htmlspecialchars($data['faculty']); ?></span></div>
+
+    <div class="info-group"><span class="info-label">วันที่เข้าร่วมกิจกรรม :</span> 
+    <span class="info-value"><?php echo date('d/m/Y', strtotime($data['activity_date'])); ?></span></div>
+    
     <?php if($isPass): ?>
         <?php if(!$already_member): ?>
             <form method="POST">
-                <button type="submit" name="join_club" class="btn btn-success bg-success mt-3">ยืนยันเข้าชมรม</button>
+                <button type="submit" name="join_club" class="btn btn-success mt-3">ยืนยันเข้าชมรม</button>
             </form>
         <?php else: ?>
-            <div class="member-notice">
-                คุณเป็นสมาชิกชมรม Higher Level รุ่นที่ 26 เรียบร้อยแล้ว 🎉
-                <img src="https://i.ibb.co/2N0F1fW/sample-qr.png" alt="QR Code เข้ากลุ่ม" class="qr-code qr-copy">
-            </div>
+            <div class="member-notice">คุณเป็นสมาชิกชมรม Higher Level รุ่นที่ 26 เรียบร้อยแล้ว 🎉</div>
         <?php endif; ?>
     <?php endif; ?>
 
@@ -196,9 +188,7 @@ canvas#confetti { position:absolute; top:0; left:0; width:100%; height:100%; poi
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <h2>🎉 คุณได้เข้าชมรมเรียบร้อยแล้ว! 🎉</h2>
-      <p class="welcome-text">ยินดีต้อนรับสู่ครอบครัว Higher Level รุ่นที่ 26</p>
-      <p class="text-white">กรุณาแสกนคิวอาร์โค้ดเพื่อเข้ากลุ่ม LINE ของ Higher Level รุ่นที่ 26</p>
-      <img src="https://i.ibb.co/2N0F1fW/sample-qr.png" alt="QR Code เข้ากลุ่ม" class="qr-code">
+      <p class="welcome-text">ยินดีต้อนรับสู่ครอบครัว Higher Level รุ่นที่ 26 🎉</p>
       <button type="button" class="btn btn-success mt-3" data-bs-dismiss="modal">ปิด</button>
     </div>
   </div>
@@ -255,13 +245,12 @@ if(<?php echo $isPass?'true':'false'; ?>){
 const memberModal = new bootstrap.Modal(document.getElementById('memberModal'));
 memberModal.show();
 
-// After modal closes, add member notice and QR code under main card
+// After modal closes, add member notice below card
 document.getElementById('memberModal').addEventListener('hidden.bs.modal', () => {
     const notice = document.createElement('div');
     notice.className = 'member-notice';
-    
-    document.querySelector('.main-card')
-    .appendChild(notice);
+    notice.innerHTML = 'คุณเป็นสมาชิกชมรม Higher Level รุ่นที่ 26 เรียบร้อยแล้ว 🎉';
+    document.querySelector('.main-card').insertBefore(notice, document.querySelector('.logout-btn'));
 });
 <?php endif; ?>
 </script>

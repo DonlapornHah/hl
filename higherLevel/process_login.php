@@ -1,19 +1,33 @@
 <?php
-include 'config.php';
 session_start();
+include 'config.php';
 
-$s = $_POST['student_id'] ?? '';
-if(!$s){ echo "<a href='login.php'>กรุณากรอกเลขนักศึกษา</a>"; return; }
+// รับค่าจากฟอร์ม
+$student_id = $_POST['student_id'] ?? '';
 
-$s = mysqli_real_escape_string($conn, $s);
-$r = mysqli_query($conn,"SELECT * FROM users WHERE student_id='$s'");
-$d = mysqli_fetch_assoc($r);
+if (empty($student_id)) {
+    echo "<a href='login.php'>กรุณากรอกเลขนักศึกษา</a>";
+    exit;
+}
 
-if($d){
-    $_SESSION['student_id'] = $d['student_id'];
-    $_SESSION['user'] = $d['fullname'];
-    echo "<script>location='welcome.php';</script>";
-}else{
-    echo "<a href='login.php'>ไม่พบผู้ใช้งาน</a>";
+// ป้องกัน SQL Injection
+$student_id = $conn->real_escape_string($student_id);
+
+// ตรวจสอบผู้ใช้งาน
+$sql = "SELECT * FROM users WHERE student_id = '$student_id' LIMIT 1";
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+    
+    // สร้าง session
+    $_SESSION['student_id'] = $user['student_id'];
+    $_SESSION['user'] = $user['fullname'];
+
+    // Redirect ไปหน้า welcome
+    header("Location: welcome.php");
+    exit;
+} else {
+    echo "<a href='login.php'>ไม่พบผู้ใช้งาน กรุณากรอกรหัสนักศึกษาให้ถูกต้อง</a>";
 }
 ?>
